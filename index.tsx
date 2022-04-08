@@ -10,24 +10,33 @@ const fetchCars = async (): Promise<Array<Car>> => {
   return json['cars'] as Array<Car>;
 };
 
+enum LoadingState {
+  Unloaded,
+  Loading,
+  Loaded,
+}
+
 const App = () => {
+  const [loadingState, setLoadingState] = useState(LoadingState.Unloaded);
   const [allCars, setAllCars] = useState([]);
 
   const loadCars = async () => {
     const cars = await fetchCars();
     setAllCars(cars);
+    setLoadingState(LoadingState.Loaded);
   };
 
   useEffect(() => {
-    if (allCars.length === 0) {
+    if (loadingState === LoadingState.Unloaded) {
+      setLoadingState(LoadingState.Loading);
       loadCars();
     }
-  }, [allCars]);
+  }, [loadingState]);
 
-  console.log(`rendering ${JSON.stringify(allCars)}`);
+  // console.log(`rendering ${JSON.stringify(allCars)}`);
   return (
     <div>
-      <p>Start editing to see some magic happen :)</p>
+      <p>{loadingState === LoadingState.Loading && 'Loading ...'}</p>
       <CarList cars={allCars} />
     </div>
   );

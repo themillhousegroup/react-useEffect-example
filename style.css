@@ -1,3 +1,21 @@
-h1, p {
-  font-family: Lato;
+body {
+  font-family: Arial, Arial, Helvetica, sans-serif;
+}
+
+table {
+  border: 1px solid #dddddd;
+  border-radius: 8px;
+}
+
+thead th {
+  text-align: left;
+  border-bottom: 1px solid #dddddd;
+  min-width: 5em;
+}
+
+tbody tr {
+  background-color: #ddddff80;
+}
+tbody tr:nth-child(2n) {
+  background-color: #ffdddd80;
 }
