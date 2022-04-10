@@ -102,8 +102,7 @@ const CarList: FC<Props> = ({ cars }: Props) => {
   const comparator = comparatorFor(defaultCarSortSelections);
   const sortedCars = cars.sort(comparator);
   return (
-    <section>
-      <p>Found {cars.length} cars</p>
+    <section className="carList">
       <table>
         <thead>
           <tr>

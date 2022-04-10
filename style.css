@@ -2,7 +2,21 @@ body {
   font-family: Arial, Arial, Helvetica, sans-serif;
 }
 
+section.statusBar {
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 4px;
+  padding: 2px 8px;
+  background-color: #dddddd80;
+}
+
+section.carList {
+  background-color: white;
+}
+
 table {
+  width: 100%;
+
   border: 1px solid #dddddd;
   border-radius: 8px;
 }

@@ -14,6 +14,7 @@ enum LoadingState {
   Unloaded,
   Loading,
   Loaded,
+  Error,
 }
 
 const App = () => {
@@ -21,9 +22,14 @@ const App = () => {
   const [allCars, setAllCars] = useState([]);
 
   const loadCars = async () => {
-    const cars = await fetchCars();
-    setAllCars(cars);
-    setLoadingState(LoadingState.Loaded);
+    try {
+      const cars = await fetchCars();
+      setAllCars(cars);
+      setLoadingState(LoadingState.Loaded);
+    } catch (e) {
+      console.error('Error loading cars', e);
+      setLoadingState(LoadingState.Error);
+    }
   };
 
   useEffect(() => {
@@ -33,10 +39,24 @@ const App = () => {
     }
   }, [loadingState]);
 
-  // console.log(`rendering ${JSON.stringify(allCars)}`);
+  const statusBar = () => {
+    return (
+      <section className="statusBar">
+        <p>{loadingState === LoadingState.Loading && 'Loading ...'}</p>
+        <p>
+          {loadingState === LoadingState.Loaded &&
+            `Showing ${allCars.length} cars`}
+        </p>
+      </section>
+    );
+  };
+
+  const spacer = () => <div style={{ height: '1em' }} />;
   return (
     <div>
-      <p>{loadingState === LoadingState.Loading && 'Loading ...'}</p>
+      {spacer()}
+      {statusBar()}
+      {spacer()}
       <CarList cars={allCars} />
     </div>
   );
