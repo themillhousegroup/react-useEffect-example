@@ -10,7 +10,7 @@ const StatusBar: React.FC<Props> = ({ loadingState, cars }: Props) => {
   const statusBarContent = (): string => {
     switch (loadingState) {
       case LoadingState.Loaded:
-        return `Showing ${cars.length} cars`;
+        return `Showing ${cars.length} car${cars.length === 1 ? '' : 's'}`;
       case LoadingState.Error:
         return `Couldn't load car info`;
       default:

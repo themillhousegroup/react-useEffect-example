@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import CarList from './CarList';
-import ColorPicker from './ColorPicker';
+import OptionPicker from './OptionPicker';
 import StatusBar from './StatusBar';
 import './style.css';
 import { Car, DebugSettings, LoadingState } from './types';
@@ -9,7 +9,7 @@ import { sleep } from './utils';
 
 const debugSettings: DebugSettings = {
   forceError: false,
-  loadDelayMillis: 777,
+  loadDelayMillis: 7,
 };
 
 const fetchCars = async (): Promise<Array<Car>> => {
@@ -26,18 +26,30 @@ const fetchCars = async (): Promise<Array<Car>> => {
 
 const filterCarsBy = (
   allCars: Array<Car>,
+  preferredMake: string | undefined,
   preferredColor: string | undefined
 ): Array<Car> => {
-  console.log(`filtering using color ${preferredColor}`);
-  return allCars;
+  console.log(
+    `filtering using make: ${preferredMake} color: ${preferredColor}`
+  );
+  const makeFiltered = preferredMake
+    ? allCars.filter((c) => c.car === preferredMake)
+    : allCars;
+
+  const colorFiltered = preferredColor
+    ? makeFiltered.filter((c) => c.car_color === preferredColor)
+    : makeFiltered;
+
+  return colorFiltered;
 };
 
 const App = () => {
   const [loadingState, setLoadingState] = useState(LoadingState.Unloaded);
   const [allCars, setAllCars] = useState([]);
+  const [preferredMake, setPreferredMake] = useState(undefined);
   const [preferredColor, setPreferredColor] = useState(undefined);
 
-  const filteredCars = filterCarsBy(allCars, preferredColor);
+  const filteredCars = filterCarsBy(allCars, preferredMake, preferredColor);
   console.log(`filtered cars to ${filteredCars.length}`);
 
   const loadCars = async () => {
@@ -61,9 +73,18 @@ const App = () => {
   const spacer = () => <div style={{ height: '1em' }} />;
   return (
     <div>
-      <ColorPicker
+      <OptionPicker
+        identifier="makeSelection"
+        label="Make"
+        possibilities={allCars.map((c) => c.car)}
+        onOptionSelected={setPreferredMake}
+      />
+      {spacer()}
+      <OptionPicker
+        identifier="colorSelection"
+        label="Color"
         possibilities={allCars.map((c) => c.car_color)}
-        onColorSelected={setPreferredColor}
+        onOptionSelected={setPreferredColor}
       />
       {spacer()}
       <StatusBar loadingState={loadingState} cars={filteredCars} />
