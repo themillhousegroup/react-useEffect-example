@@ -102,7 +102,7 @@ const CarList: FC<Props> = ({ cars }: Props) => {
   const comparator = comparatorFor(defaultCarSortSelections);
   const sortedCars = cars.sort(comparator);
   return (
-    <section className="carList">
+    <article className="carList">
       <table>
         <thead>
           <tr>
@@ -123,7 +123,7 @@ const CarList: FC<Props> = ({ cars }: Props) => {
           ))}
         </tbody>
       </table>
-    </section>
+    </article>
   );
 };
 export default CarList;

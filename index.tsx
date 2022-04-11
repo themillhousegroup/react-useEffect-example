@@ -1,25 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import { render } from 'react-dom';
 import CarList from './CarList';
+import ColorPicker from './ColorPicker';
+import StatusBar from './StatusBar';
 import './style.css';
-import { Car } from './types';
+import { Car, DebugSettings, LoadingState } from './types';
+import { sleep } from './utils';
+
+const debugSettings: DebugSettings = {
+  forceError: false,
+  loadDelayMillis: 777,
+};
 
 const fetchCars = async (): Promise<Array<Car>> => {
+  if (debugSettings.forceError) {
+    throw new Error('forced fetch error');
+  }
   const response = await fetch('https://myfakeapi.com/api/cars/');
+  if (debugSettings.loadDelayMillis) {
+    await sleep(debugSettings.loadDelayMillis);
+  }
   const json = await response.json();
   return json['cars'] as Array<Car>;
 };
 
-enum LoadingState {
-  Unloaded,
-  Loading,
-  Loaded,
-  Error,
-}
+const filterCarsBy = (
+  allCars: Array<Car>,
+  preferredColor: string | undefined
+): Array<Car> => {
+  console.log(`filtering using color ${preferredColor}`);
+  return allCars;
+};
 
 const App = () => {
   const [loadingState, setLoadingState] = useState(LoadingState.Unloaded);
   const [allCars, setAllCars] = useState([]);
+  const [preferredColor, setPreferredColor] = useState(undefined);
+
+  const filteredCars = filterCarsBy(allCars, preferredColor);
+  console.log(`filtered cars to ${filteredCars.length}`);
 
   const loadCars = async () => {
     try {
@@ -39,25 +58,17 @@ const App = () => {
     }
   }, [loadingState]);
 
-  const statusBar = () => {
-    return (
-      <section className="statusBar">
-        <p>{loadingState === LoadingState.Loading && 'Loading ...'}</p>
-        <p>
-          {loadingState === LoadingState.Loaded &&
-            `Showing ${allCars.length} cars`}
-        </p>
-      </section>
-    );
-  };
-
   const spacer = () => <div style={{ height: '1em' }} />;
   return (
     <div>
+      <ColorPicker
+        possibilities={allCars.map((c) => c.car_color)}
+        onColorSelected={setPreferredColor}
+      />
       {spacer()}
-      {statusBar()}
+      <StatusBar loadingState={loadingState} cars={filteredCars} />
       {spacer()}
-      <CarList cars={allCars} />
+      <CarList cars={filteredCars} />
     </div>
   );
 };
